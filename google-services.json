@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "564081173286",
+    "firebase_url": "https://de-abril-6fe0f-default-rtdb.firebaseio.com",
+    "project_id": "de-abril-6fe0f",
+    "storage_bucket": "de-abril-6fe0f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564081173286:android:9d423639c7748b706357e7",
+        "android_client_info": {
+          "package_name": "com.deabrilconductoresdriver.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzXL81MLZZQM8L012SnMTUQiUeBTvqRHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564081173286:android:89c302ecdde8d0dd6357e7",
+        "android_client_info": {
+          "package_name": "com.radiomovildeabriluser.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzXL81MLZZQM8L012SnMTUQiUeBTvqRHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

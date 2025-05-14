@@ -1,0 +1,2 @@
+/Users/gersonaguilar/Documents/15deabril_user/android/app/.cxx/RelWithDebInfo/1p5e693v/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/gersonaguilar/Documents/15deabril_user/android/app/.cxx/RelWithDebInfo/1p5e693v/armeabi-v7a/CMakeFiles/edit_cache.dir

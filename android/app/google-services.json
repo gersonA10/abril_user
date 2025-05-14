@@ -1,0 +1,123 @@
+{
+  "project_info": {
+    "project_number": "564081173286",
+    "firebase_url": "https://de-abril-6fe0f-default-rtdb.firebaseio.com",
+    "project_id": "de-abril-6fe0f",
+    "storage_bucket": "de-abril-6fe0f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564081173286:android:9d423639c7748b706357e7",
+        "android_client_info": {
+          "package_name": "com.deabrilconductoresdriver.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564081173286-gkk4meqel00b3hdfokqbkq0l9lvroca2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deabrilconductoresdriver.driver",
+            "certificate_hash": "e3c9d8473fcfb302efcd91952e5f40bdd24a88c6"
+          }
+        },
+        {
+          "client_id": "564081173286-l21fa6u45r4jbdftmgtl22fkr2er6a5e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deabrilconductoresdriver.driver",
+            "certificate_hash": "65795cb6e2a1fa70cf715a6553e8febfe16e1e63"
+          }
+        },
+        {
+          "client_id": "564081173286-utal0vipe8nabjggtec4jf0ou5g2ks09.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deabrilconductoresdriver.driver",
+            "certificate_hash": "5b97c71bf149b4ee1b9e690aa3b70d59bea5836f"
+          }
+        },
+        {
+          "client_id": "564081173286-pq1cn7ch5brdgbu3cfj5pl6ghpddppj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzXL81MLZZQM8L012SnMTUQiUeBTvqRHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564081173286-pq1cn7ch5brdgbu3cfj5pl6ghpddppj0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "564081173286-1slcjlovi4icmum9ntjl4p6th2aveeo4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterUser"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564081173286:android:89c302ecdde8d0dd6357e7",
+        "android_client_info": {
+          "package_name": "com.radiomovildeabriluser.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564081173286-n6rjn47pkpl39nios37larc1bkg3em9b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.radiomovildeabriluser.user",
+            "certificate_hash": "96b0082b4fa770979f3ab636fb3713982b9aa1c3"
+          }
+        },
+        {
+          "client_id": "564081173286-qs0liokmfd334t2f077k4cevvookpd0p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.radiomovildeabriluser.user",
+            "certificate_hash": "65795cb6e2a1fa70cf715a6553e8febfe16e1e63"
+          }
+        },
+        {
+          "client_id": "564081173286-pq1cn7ch5brdgbu3cfj5pl6ghpddppj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzXL81MLZZQM8L012SnMTUQiUeBTvqRHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564081173286-pq1cn7ch5brdgbu3cfj5pl6ghpddppj0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "564081173286-1slcjlovi4icmum9ntjl4p6th2aveeo4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterUser"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

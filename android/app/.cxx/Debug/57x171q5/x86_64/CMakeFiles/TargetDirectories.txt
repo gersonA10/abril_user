@@ -1,0 +1,2 @@
+/Users/gersonaguilar/Documents/15deabril_user/android/app/.cxx/Debug/57x171q5/x86_64/CMakeFiles/rebuild_cache.dir
+/Users/gersonaguilar/Documents/15deabril_user/android/app/.cxx/Debug/57x171q5/x86_64/CMakeFiles/edit_cache.dir

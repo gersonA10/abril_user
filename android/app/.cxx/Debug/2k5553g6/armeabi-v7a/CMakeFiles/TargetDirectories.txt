@@ -1,0 +1,2 @@
+/Users/gersonaguilar/Documents/abril_user/android/app/.cxx/Debug/2k5553g6/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/gersonaguilar/Documents/abril_user/android/app/.cxx/Debug/2k5553g6/armeabi-v7a/CMakeFiles/edit_cache.dir
