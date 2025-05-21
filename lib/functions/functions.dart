@@ -2423,10 +2423,10 @@ cancelRequest([dynamic requestID]) async {
       ),
     );
     if (response.statusCode == 200) {
-      FirebaseDatabase.instance
-          .ref('requests')
-          .child(userRequestData['id'])
-          .update({'cancelled_by_user': true});
+      // FirebaseDatabase.instance
+      //     .ref('requests')
+      //     .child(userRequestData['id'])
+      //     .update({'cancelled_by_user': true});
       userRequestData = {};
       if (requestStreamStart?.isPaused == false ||
           requestStreamEnd?.isPaused == false) {
@@ -2501,9 +2501,9 @@ cancelRequestWithReason(reason) async {
             {'request_id': ri, 'reason': reason}));
     if (response.statusCode == 200) {
       cancelRequestByUser = true;
-      FirebaseDatabase.instance
-          .ref('requests/${userRequestData['id']}')
-          .update({'cancelled_by_user': true});
+      // FirebaseDatabase.instance
+      //     .ref('requests/${userRequestData['id']}')
+      //     .update({'cancelled_by_user': true});
       userRequestData = {};
       if (rideStreamUpdate?.isPaused == false ||
           rideStreamStart?.isPaused == false) {

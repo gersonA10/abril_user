@@ -147,8 +147,7 @@ class RequestProvider extends ChangeNotifier {
     });
 
     // Escucha el estado del viaje
-    _statusRideSubscription =
-        requestService.getStatusRide(requestID).listen((request) async {
+    _statusRideSubscription = requestService.getStatusRide(requestID).listen((request) async {
       if (request == 1) {
         final data = await requestService.getRequestData(requestID);
         // Future.delayed(const Duration(seconds: 4), () async {
@@ -199,8 +198,7 @@ class RequestProvider extends ChangeNotifier {
     });
 
     // Escucha si fue cancelado por el usuario (booleano)
-    _cancelledByUserBoolSubscription =
-        requestService.getCancelledByUserBool(requestID).listen((request) {
+    _cancelledByUserBoolSubscription = requestService.getCancelledByUserBool(requestID).listen((request) {
       if (request == 'true') {
         mostrardDibujadoDestino = false;
         isAccept = false;

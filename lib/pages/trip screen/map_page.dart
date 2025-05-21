@@ -1367,7 +1367,7 @@ class _MapsState extends State<Maps> with WidgetsBindingObserver, TickerProvider
                                                       ),
                                                     ),
                                                   ),
-                                                  ((_lastCenter == _centerLocation && !ischanged && userDetails[  'has_ongoing_ride'] ==  true))
+                                                  ((userDetails['has_ongoing_ride'] ==  true))
                                                       ? const AnimatedOngoingRides()
                                                       : Container(),
                                                   (_bottom == 0)

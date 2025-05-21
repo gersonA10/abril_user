@@ -84,7 +84,6 @@ void _getCurrentLocation() async {
   try {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Puedes mostrar un dialog para decirle al usuario que active la ubicación
       return;
     }
 
@@ -141,7 +140,6 @@ void _getCurrentLocation() async {
                     ),
                     MarkerLayer(
                       markers: [
-                        // Marcador del punto de recogida (pickup)
                         Marker(
                           rotate: true,
                           height: size.height * 0.10,
@@ -157,7 +155,6 @@ void _getCurrentLocation() async {
                           ),
                         ),
 
-                        // Marcador del conductor (si hay posición)
                         if (driverPosition != null)
                           Marker(
                             rotate: true,
@@ -178,7 +175,6 @@ void _getCurrentLocation() async {
                   ],
                 ),
 
-                /// Contenido dinámico
                 Consumer<RequestProvider>(
                   builder: (_, provider, __) {
                     if (provider.isLoading) {
