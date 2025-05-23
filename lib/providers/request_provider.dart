@@ -235,7 +235,6 @@ class RequestProvider extends ChangeNotifier {
 
     final val = await etaRequest();
     if (val == 'logout') {
-      // Manejo opcional fuera
     }
 
     isLoading = false;
@@ -298,7 +297,6 @@ class RequestProvider extends ChangeNotifier {
     searchTimeLeft = 120;
     assignedDriver = null;
 
-    // Limpia el estado guardado y guarda paso "seleccionar"
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('assignedDriver');
     prefs.remove('requestIDRIDE');

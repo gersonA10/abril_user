@@ -3,15 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_user/functions/functions.dart';
 import 'package:flutter_user/pages/PedirMovil/seleccionar%20auto/widgets/lista_autos.dart';
-import 'package:flutter_user/pages/splash%20screen/loading.dart';
 import 'package:flutter_user/pages/trip%20screen/bookingwidgets.dart';
+import 'package:flutter_user/providers/payment_provider.dart';
 import 'package:flutter_user/providers/request_provider.dart';
 import 'package:flutter_user/styles/styles.dart';
 import 'package:flutter_user/translations/translation.dart';
-import 'package:flutter_user/widgets/estados_widget.dart';
 import 'package:flutter_user/widgets/prefrencias_widget.dart';
 import 'package:flutter_user/widgets/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +25,7 @@ class StepSelectVehicle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final paymentProvider = Provider.of<PaymentProvider>(context, listen: false);
     final provider = Provider.of<RequestProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
@@ -95,7 +94,9 @@ class StepSelectVehicle extends StatelessWidget {
                       'is_pet_available': (choosePets == false) ? false : true,
                       'is_luggage_available': (chooseLuggages == false) ? false : true,
                       'is_licoreria': (licoreria == false) ? false : true,
-                      'is_parrilla': (parrilla == false) ? false : true
+                      'is_parrilla': (parrilla == false) ? false : true,
+                      'payment': paymentProvider.selectedMethod,
+                      
                     }),
                      'api/v1/request/create',
                      context
@@ -125,24 +126,19 @@ class StepSelectVehicle extends StatelessWidget {
   }
 }
 
-class PaymentOptionSelector extends StatefulWidget {
+class PaymentOptionSelector extends StatelessWidget {
   const PaymentOptionSelector({super.key});
 
   @override
-  State<PaymentOptionSelector> createState() => _PaymentOptionSelectorState();
-}
-
-class _PaymentOptionSelectorState extends State<PaymentOptionSelector> {
-  int selectedIndex = 0;
-
-  final List<Map<String, dynamic>> options = [
-    {'label': 'Efectivo', 'icon': Icons.phone_iphone},
-    {'label': 'Pago por QR', 'icon': Icons.qr_code_2_sharp},
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
+    final provider = Provider.of<PaymentProvider>(context);
+    final selectedIndex = provider.selectedMethod;
+
+    final List<Map<String, dynamic>> options = [
+      {'label': 'Efectivo', 'icon': Icons.phone_iphone},
+      {'label': 'Pago por QR', 'icon': Icons.qr_code_2_sharp},
+    ];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(options.length, (index) {
@@ -172,7 +168,7 @@ class _PaymentOptionSelectorState extends State<PaymentOptionSelector> {
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
-            onTap: () => setState(() => selectedIndex = index),
+            onTap: () => provider.setMethod(index),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(

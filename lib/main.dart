@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_user/firebase_options.dart';
 import 'package:flutter_user/functions/providers/sign_in_provider.dart';
+import 'package:flutter_user/providers/payment_provider.dart';
 import 'package:flutter_user/providers/request_provider.dart';
 import 'package:provider/provider.dart';
 import 'functions/functions.dart';
@@ -56,7 +57,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider(create: (_) => SignInProvider()),
-        ChangeNotifierProvider(create: (_)=> RequestProvider())
+        ChangeNotifierProvider(create: (_)=> RequestProvider()),
+         ChangeNotifierProvider(create: (_)=> PaymentProvider())
       ],
       child: GestureDetector(
         onTap: () {
