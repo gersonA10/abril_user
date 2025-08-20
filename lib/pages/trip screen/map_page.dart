@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 import 'package:flutter_user/functions/fect_data_firebase.dart';
 import 'package:flutter_user/functions/providers/sign_in_provider.dart';
 import 'package:flutter_user/pages/PedirMovil/request_ride.dart';
@@ -14,6 +16,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:location/location.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
 import '../../functions/functions.dart';
 import '../../functions/geohash.dart';
@@ -69,6 +72,7 @@ bool isOutStation = false;
 bool isRentalRide = false;
 
 class _MapsState extends State<Maps> with WidgetsBindingObserver, TickerProviderStateMixin {
+  
   late final AnimationController _menuController;
   late final Animation<double> _menuAnimation;
   dynamic _lastCenter;
@@ -135,6 +139,7 @@ class _MapsState extends State<Maps> with WidgetsBindingObserver, TickerProvider
       backgroundColor: Colors.transparent,
       isDismissible: true,
       transitionAnimationController: _menuController,
+        isScrollControlled: true,
       builder: (_) => const UserInfoSheet(),
     );
   }
@@ -179,6 +184,7 @@ class _MapsState extends State<Maps> with WidgetsBindingObserver, TickerProvider
 
   @override
   void initState() {
+       loadMbtiles();
     _menuController = AnimationController(
       duration: const Duration(milliseconds: 250),
       vsync: this,
@@ -434,6 +440,31 @@ class _MapsState extends State<Maps> with WidgetsBindingObserver, TickerProvider
     );
     // Reproduce el sonido
   }
+  
+
+    Future<String> copyMbtilesToLocal() async {
+    final byteData = await rootBundle.load('assets/tarija.mbtiles');
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/tarija.mbtiles');
+
+    if (!await file.exists()) {
+      await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    }
+
+    return file.path;
+  }
+
+    String? mbtilesPath;
+
+  Future<void> loadMbtiles() async {
+    final path = await copyMbtilesToLocal();
+    setState(() {
+      mbtilesPath = path;
+    });
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1063,12 +1094,17 @@ class _MapsState extends State<Maps> with WidgetsBindingObserver, TickerProvider
                                                                           onTap: (P, L) {}),
                                                                       children: [
                                                                         fm.TileLayer(
-                                                                          // minZoom: 10,
-                                                                          urlTemplate:
-                                                                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                                                          userAgentPackageName:
-                                                                              'com.example.app',
-                                                                        ),
+                                                                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+                                                                      // Asigna un NetworkTileProvider al parámetro 'tileProvider'.
+                                                                      tileProvider: fm.NetworkTileProvider(
+                                                                        // Y los headers van dentro de este NetworkTileProvider.
+                                                                        headers: {
+                                                                          'User-Agent': 'MiAppDeTarija/1.0 (gerson10107@gmail.com)',
+                                                                        },
+                                                                      ),
+  
+                                                                    ),
                                                                         fm.MarkerLayer(
                                                                           markers: [
                                                                             fm.Marker(
@@ -1367,7 +1403,7 @@ class _MapsState extends State<Maps> with WidgetsBindingObserver, TickerProvider
                                                       ),
                                                     ),
                                                   ),
-                                                  ((userDetails['has_ongoing_ride'] ==  true))
+                                                  (userDetails['has_ongoing_ride'])
                                                       ? const AnimatedOngoingRides()
                                                       : Container(),
                                                   (_bottom == 0)
@@ -3868,9 +3904,11 @@ class _BannerImageState extends State<BannerImage> {
   Timer? timer;
   bool end = false;
 
+
   @override
   void initState() {
     super.initState();
+   
     if (banners.length > 1) {
       timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
         if (!mounted) return;

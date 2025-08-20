@@ -1,15 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_user/functions/fect_data_firebase.dart';
 import 'package:flutter_user/models/driver_model.dart';
 import 'package:record/record.dart';
-import 'package:http/http.dart' as http;
 
-import '../../functions/functions.dart';
 import '../../styles/styles.dart';
 import 'header_chat_widget.dart';
 import 'list_chat_widget.dart';
@@ -25,8 +20,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  // final AudioRecorder _recorder = AudioRecorder();
-  final _recorder = Record();
+  final _recorder = AudioRecorder();
   final ScrollController _controller = ScrollController();
     late DatabaseReference _requestRef;
 
@@ -35,6 +29,9 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.requestId == null) {
+      
+    }
      _listenIfDriverCancelled();
     _getRecordPermission();
   }
@@ -50,7 +47,7 @@ class _ChatPageState extends State<ChatPage> {
       final value = event.snapshot.value;
       if (value == true) {
         if (mounted) {
-          Navigator.of(context).pop(); // Cierra la pantalla del chat
+          Navigator.of(context).pop();
         }
       }
     });
@@ -62,8 +59,6 @@ class _ChatPageState extends State<ChatPage> {
     _requestRef.onDisconnect();
     super.dispose();
   }
-
-  //  final requestID = widget.requestId;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +90,6 @@ class _ChatPageState extends State<ChatPage> {
                 HeaderChatWidget(
                   driverName: widget.driver!.name,
                   carDetail: '${widget.driver!.color} ${widget.driver!.brand} ${widget.driver!.year}',
-                  // carDetail: "${userRequestData['driverDetail']['data']['car_color']} ${userRequestData['driverDetail']['data']['car_make_name']} ${userRequestData['driverDetail']['data']['car_model_name']}",
                   profilePicture: widget.driver!.photoDriver
                 ),
                 SizedBox(height: media.width * 0.05),

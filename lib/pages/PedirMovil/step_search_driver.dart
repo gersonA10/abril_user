@@ -4,13 +4,20 @@ import 'package:flutter_user/styles/styles.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class StepSearchingDriver extends StatelessWidget {
+class StepSearchingDriver extends StatefulWidget {
   const StepSearchingDriver({super.key});
+
+  @override
+  State<StepSearchingDriver> createState() => _StepSearchingDriverState();
+}
+
+class _StepSearchingDriverState extends State<StepSearchingDriver> {
+
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RequestProvider>(context);
-    final totalSeconds = 120;
+    const totalSeconds = 120;
     final progress = provider.searchTimeLeft / totalSeconds;
 
     return _bottomSheet(

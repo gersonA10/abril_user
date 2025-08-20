@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_user/data/db_helper.dart';
 import 'package:flutter_user/pages/trip%20screen/ongoingrides.dart';
 import 'package:flutter_user/styles/styles.dart';
 import 'package:flutter_user/widgets/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AnimatedOngoingRides extends StatefulWidget {
   const AnimatedOngoingRides({Key? key}) : super(key: key);
@@ -43,6 +45,10 @@ class _AnimatedOngoingRidesState extends State<AnimatedOngoingRides>
       top: media.height * 0.71,
       child: InkWell(
         onTap: () async {
+          // final prefs = await SharedPreferences.getInstance();
+          // print(prefs.getString('requestIdTemp'));
+          //  final storedId = await DBHelper.instance.getRequestId();
+          //  print(storedId);
           Navigator.push(
             context,
             MaterialPageRoute(

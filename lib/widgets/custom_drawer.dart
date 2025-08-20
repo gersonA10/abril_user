@@ -53,167 +53,169 @@ class _UserInfoSheetState extends State<UserInfoSheet> {
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      userDetails['name'],
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: textColorPrimary,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userDetails['name'],
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: textColorPrimary,
+                        ),
                       ),
-                    ),
-                    Text(
-                      userDetails['mobile'],
-                      style: const TextStyle(color: textColorSecondary),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Container(
-                  width: media.width * 0.12,
-                  height: media.width * 0.12,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      image: DecorationImage(
-                          image: NetworkImage(userDetails['profile_picture']),
-                          fit: BoxFit.cover)),
-                ),
-              ],
-            ),
-            Divider(height: 32, color: theme),
-            ListTile(
-              leading:  Icon(Icons.edit, color: theme),
-              title: const Text(
-                "Editar Perfil",
-                style: TextStyle(color: textColorPrimary),
-              ),
-              onTap: () async {
-                var val = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const EditProfile()));
-                if (val) {
-                  setState(() {});
-                }
-              },
-            ),
-            ListTile(
-              leading:
-                   Icon(Icons.view_list_outlined, color: theme),
-              title: Text(
-                languages[choosenLanguage]['text_enable_history'],
-                style: const TextStyle(color: textColorPrimary),
-              ),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const History()));
-              },
-            ),
-            ListTile(
-              leading:  Icon(Icons.luggage_outlined, color: theme),
-              title: Text(
-                languages[choosenLanguage]['text_outstation'],
-                style: const TextStyle(color: textColorPrimary),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const OutStationRides()));
-              },
-            ),
-            ListTile(
-              leading:  Icon(Icons.warning_amber, color: theme),
-              title: Text(
-                languages[choosenLanguage]['text_make_complaints'],
-                style: const TextStyle(color: textColorPrimary),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MakeComplaint()));
-              },
-            ),
-            ListTile(
-              leading:  Icon(Icons.settings, color: theme),
-              title: Text(
-                languages[choosenLanguage]['text_settings'],
-                style: const TextStyle(color: textColorPrimary),
-              ),
-              onTap: () async {
-                var nav = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SettingsPage()));
-                if (nav) {
-                  setState(() {});
-                }
-              },
-            ),
-            ListTile(
-              leading:  Icon(Icons.logout, color: theme),
-              title:  Text(
-                "Cerrar sesión",
-                style: TextStyle(color: theme),
-              ),
-              onTap: () {
-                // setState(() {
-                //   logout = true;
-                // });
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(
-                        languages[choosenLanguage]['text_confirmlogout'],
-                        textAlign: TextAlign.center,
+                      Text(
+                        userDetails['mobile'],
+                        style: const TextStyle(color: textColorSecondary),
                       ),
-                      content: Button(
-                        onTap: () async {
-                          // setState(() {
-                          logout = false;
-                          _loading = true;
-                          // });
-                          await SignInProvider().logOut();
-                          var result = await userLogout();
-                          if (result == 'success' || result == 'logout') {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Login(),
-                              ),
-                              (route) => false,
-                            );
-                            userDetails.clear();
-                          } else {
+                    ],
+                  ),
+                  const Spacer(),
+                  Container(
+                    width: media.width * 0.12,
+                    height: media.width * 0.12,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                            image: NetworkImage(userDetails['profile_picture']),
+                            fit: BoxFit.cover)),
+                  ),
+                ],
+              ),
+              Divider(height: 30, color: theme),
+              ListTile(
+                leading:  Icon(Icons.edit, color: theme),
+                title: const Text(
+                  "Editar Perfil",
+                  style: TextStyle(color: textColorPrimary),
+                ),
+                onTap: () async {
+                  var val = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const EditProfile()));
+                  if (val) {
+                    setState(() {});
+                  }
+                },
+              ),
+              ListTile(
+                leading:
+                     Icon(Icons.view_list_outlined, color: theme),
+                title: Text(
+                  languages[choosenLanguage]['text_enable_history'],
+                  style: const TextStyle(color: textColorPrimary),
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const History()));
+                },
+              ),
+              ListTile(
+                leading:  Icon(Icons.luggage_outlined, color: theme),
+                title: Text(
+                  languages[choosenLanguage]['text_outstation'],
+                  style: const TextStyle(color: textColorPrimary),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const OutStationRides()));
+                },
+              ),
+              ListTile(
+                leading:  Icon(Icons.warning_amber, color: theme),
+                title: Text(
+                  languages[choosenLanguage]['text_make_complaints'],
+                  style: const TextStyle(color: textColorPrimary),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MakeComplaint()));
+                },
+              ),
+              ListTile(
+                leading:  Icon(Icons.settings, color: theme),
+                title: Text(
+                  languages[choosenLanguage]['text_settings'],
+                  style: const TextStyle(color: textColorPrimary),
+                ),
+                onTap: () async {
+                  var nav = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsPage()));
+                  if (nav) {
+                    setState(() {});
+                  }
+                },
+              ),
+              ListTile(
+                leading:  Icon(Icons.logout, color: theme),
+                title:  Text(
+                  "Cerrar sesión",
+                  style: TextStyle(color: theme),
+                ),
+                onTap: () {
+                  // setState(() {
+                  //   logout = true;
+                  // });
+                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(
+                          languages[choosenLanguage]['text_confirmlogout'],
+                          textAlign: TextAlign.center,
+                        ),
+                        content: Button(
+                          onTap: () async {
+                            // setState(() {
+                            // logout = false;
+                            _loading = true;
+                            // });
+                            await SignInProvider().logOut();
+                            var result = await userLogout();
+                            if (result == 'success' || result == 'logout') {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                                (route) => false,
+                              );
+                              userDetails.clear();
+                            } else {
+                              // setState(() {
+                              _loading = false;
+                              // logout = true;
+                              // });
+                            }
                             // setState(() {
                             _loading = false;
-                            logout = true;
                             // });
-                          }
-                          // setState(() {
-                          _loading = false;
-                          // });
-                        },
-                        text: languages[choosenLanguage]['text_confirm'],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
+                          },
+                          text: languages[choosenLanguage]['text_confirm'],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -6,7 +6,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart' as pl;
+import 'package:flutter_user/data/db_helper.dart';
 import 'package:flutter_user/pages/trip%20screen/ongoingrides.dart';
+import 'package:flutter_user/providers/request_provider.dart';
 import 'package:flutter_user/translations/translation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +16,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
@@ -973,7 +977,9 @@ bool ismulitipleride = false;
 
 DateTime? _lastExecutionTime;
 
+String? storeRId;
 getUserDetails({id}) async {
+  storeRId = await DBHelper.instance.getRequestId();
   const debounceDuration = Duration(seconds: 2);
 
   if (_lastExecutionTime != null &&
@@ -986,9 +992,7 @@ getUserDetails({id}) async {
   dynamic result;
   try {
     var response = await http.get(
-      (ismulitipleride)
-          ? Uri.parse('${url}api/v1/user?current_ride=$id')
-          : Uri.parse('${url}api/v1/user'),
+      Uri.parse('${url}api/v1/user'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${bearerToken[0].token}'
@@ -997,8 +1001,7 @@ getUserDetails({id}) async {
     print("_______Detalle_________");
     print(response.body);
     if (response.statusCode == 200) {
-      userDetails =
-          Map<String, dynamic>.from(jsonDecode(response.body)['data']);
+      userDetails = Map<String, dynamic>.from(jsonDecode(response.body)['data']);
       favAddress = userDetails['favouriteLocations']['data'];
       sosData = userDetails['sos']['data'];
       if (mapType == '') {
@@ -1018,14 +1021,12 @@ getUserDetails({id}) async {
         } else {
           choosenTransportType = 1;
         }
-        tripStops =
-            userDetails['onTripRequest']['data']['requestStops']['data'];
+        tripStops = userDetails['onTripRequest']['data']['requestStops']['data'];
         addressList.add(AddressList(
             id: '1',
             type: 'pickup',
             address: userRequestData['pick_address'],
-            latlng: LatLng(
-                userRequestData['pick_lat'], userRequestData['pick_lng']),
+            latlng: LatLng(userRequestData['pick_lat'], userRequestData['pick_lng']),
             name: userRequestData['pickup_poc_name'],
             pickup: true,
             number: userRequestData['pickup_poc_mobile'],
@@ -1961,6 +1962,7 @@ Map<String, dynamic> userRequestData = {};
 //create request
 String tripError = '';
 createRequest(value, api, BuildContext context) async {
+  final prefs =await SharedPreferences.getInstance();
   waitingTime = 0;
   dynamic result;
   try {
@@ -1972,9 +1974,12 @@ createRequest(value, api, BuildContext context) async {
         body: value);
     if (response.statusCode == 200) {
       userRequestData = jsonDecode(response.body)['data'];
-      streamRequest();
+      String requestIdData =userRequestData['id'];
+      await DBHelper.instance.saveRequestId(requestIdData);  
+      await prefs.setString('requestIDTEMPORAL', requestIdData);
+      // streamRequest();
       result = 'success';
-      valueNotifierBook.incrementNotifier();
+      // valueNotifierBook.incrementNotifier();
     } else if (response.statusCode == 401) {
       result = 'logout';
     } else {
@@ -2407,6 +2412,9 @@ class RequestCreate {
       };
 }
 
+
+
+
 //user cancel request
 
 cancelRequest([dynamic requestID]) async {
@@ -2423,10 +2431,6 @@ cancelRequest([dynamic requestID]) async {
       ),
     );
     if (response.statusCode == 200) {
-      // FirebaseDatabase.instance
-      //     .ref('requests')
-      //     .child(userRequestData['id'])
-      //     .update({'cancelled_by_user': true});
       userRequestData = {};
       if (requestStreamStart?.isPaused == false ||
           requestStreamEnd?.isPaused == false) {
@@ -2487,9 +2491,12 @@ cancelLaterRequest(val) async {
 
 //user cancel request with reason
 
-cancelRequestWithReason(reason) async {
+cancelRequestWithReason(reason, BuildContext context) async {
+      final requestProvider = Provider.of<RequestProvider>(context, listen: false);
   final prefs = await SharedPreferences.getInstance();
-  final ri = prefs.getString('requestIDRIDE');
+  var ri = prefs.getString('requestIDRIDE');
+  var ri2 = prefs.getString('requestIDTEMPORAL');
+  ri ??= ri2;
   dynamic result;
   try {
     var response = await http.post(Uri.parse('${url}api/v1/request/cancel'),
@@ -2497,13 +2504,9 @@ cancelRequestWithReason(reason) async {
           'Authorization': 'Bearer ${bearerToken[0].token}',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(
-            {'request_id': ri, 'reason': reason}));
+        body: jsonEncode( {'request_id': ri, 'reason': reason}));
     if (response.statusCode == 200) {
       cancelRequestByUser = true;
-      // FirebaseDatabase.instance
-      //     .ref('requests/${userRequestData['id']}')
-      //     .update({'cancelled_by_user': true});
       userRequestData = {};
       if (rideStreamUpdate?.isPaused == false ||
           rideStreamStart?.isPaused == false) {
@@ -2514,6 +2517,7 @@ cancelRequestWithReason(reason) async {
       }
       await getUserDetails();
       result = 'success';
+      requestProvider.cancelSearch(ri);
       valueNotifierBook.incrementNotifier();
     } else if (response.statusCode == 401) {
       result = 'logout';

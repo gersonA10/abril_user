@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_user/data/db_helper.dart';
 import 'package:flutter_user/functions/functions.dart';
 import 'package:flutter_user/pages/PedirMovil/seleccionar%20auto/widgets/lista_autos.dart';
 import 'package:flutter_user/pages/trip%20screen/bookingwidgets.dart';
@@ -29,8 +30,8 @@ class StepSelectVehicle extends StatelessWidget {
     final provider = Provider.of<RequestProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
-    return  provider.isLoadingRideAccept == true ? 
-    Container(
+    return  provider.isLoadingRideAccept == true 
+    ?  Container(
       width: double.infinity,
       height: size.height,
       color: Colors.black.withOpacity(0.5),
@@ -80,6 +81,21 @@ class StepSelectVehicle extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                if (customPickup==null ) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Selecciona una ubicación',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Color.fromARGB(255, 151, 44, 36),
+                      duration: Duration(seconds: 3),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  return;
+                  }
                   final prefs = await SharedPreferences.getInstance();
                   provider.isLoadingRide = true;
                   var result = await createRequest(
@@ -104,7 +120,8 @@ class StepSelectVehicle extends StatelessWidget {
                   provider.isLoadingRide = false;
                   if (result == 'success') { 
                    final String requestID = userRequestData['id'];
-                   prefs.setString('requestIDRIDE', requestID);
+                  //  await DBHelper.instance.saveRequestId(requestID);  
+                   await prefs.setString('requestIDRIDE', requestID);
                   provider.startSearch();
                   provider.startListeningToRequestStreams(requestID, context);
                     

@@ -30,7 +30,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
   TextEditingController chatText = TextEditingController();
   final audioService = ChatAudioService();
   bool showSendTextButton = false;
-    final Record _recorder = Record();
+    final AudioRecorder _recorder = AudioRecorder();
       Timer? _recordingTimer;
    bool isLoading = false; // Nuevo estado para el loader
 
@@ -92,7 +92,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
     String filePath = '${directory.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
     await _recorder.start(
-      // const RecordConfig(),
+      const RecordConfig(),
       path: filePath,
     );
 
@@ -150,7 +150,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
                 onPressed: selectImage,
               ),
               SizedBox(
-                width: showSendButton ? size.width * 0.52 : size.width * 0.68,
+                width: showSendButton ? size.width * 0.52 : size.width * 0.65,
                 child: TextField(
                   controller: chatText,
                   decoration: InputDecoration(
@@ -175,14 +175,33 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
                   },
                 ),
               ),
-              SizedBox(width: showSendButton ? 50 : 20,),
-              !showSendButton ? 
-              GestureDetector(
-                onLongPress: startRecording,
-                onLongPressUp: stopRecording,
-                child: Icon(Icons.mic, color: isRecording ? Colors.green : theme),
-              ) : Container(),
-              const SizedBox(width: 10,),
+              const Spacer(),
+             !showSendButton
+                ? GestureDetector(
+                    onLongPress: startRecording,
+                    onLongPressUp: stopRecording,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: isRecording ? 60 : 40,
+                      height: isRecording ? 60 : 40,
+                      decoration: BoxDecoration(
+                        color: isRecording ? Colors.green : theme,
+                        shape: BoxShape.circle,
+                        boxShadow: isRecording
+                            ? [
+                                BoxShadow(
+                                  color: Colors.green.withOpacity(0.6),
+                                  blurRadius: 12,
+                                  spreadRadius: 2,
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: const Icon(Icons.mic, color: Colors.white, size: 24),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+              // const SizedBox(width: 10,),
               showSendButton
                   ? GestureDetector(
                       onTap: () async {
@@ -205,6 +224,8 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
                       ),
                     )
                   : const SizedBox.shrink(),
+
+              const SizedBox(width: 5,)
             ],
           ),
         ),

@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_user/data/db_helper.dart';
 import 'package:flutter_user/functions/fect_data_firebase.dart';
 import 'package:flutter_user/functions/functions.dart';
 import 'package:flutter_user/models/driver_model.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum RequestStep { seleccionar, buscando, conductorAsignado }
@@ -120,22 +120,22 @@ class RequestProvider extends ChangeNotifier {
     final player = AudioPlayer();
     await player.play(AssetSource('audio/fin_viaje_usuario.mp3'));
   }
-  void startListeningToRequestStreams(String requestID, BuildContext context) async {
+  Future<void> startListeningToRequestStreams(String requestID, BuildContext context) async {
 
     final prefs = await SharedPreferences.getInstance();
-    final ri = prefs.getString('requestIDRIDE');
+    // await prefs.setString('requestIdTemp', requestID);
+    // final ri = prefs.getString('requestIDRIDE');
     int previousMessageCount = 0;
 
     // Escucha el stream para contar los mensajes
     _messageCountSubscription = requestService.getMessageCountStream(requestID).listen((request) {
-      print(previousMessageCount);
       if (previousMessageCount == 0) {
         previousMessageCount = request ?? 0;
       } else {
         if (request != null && request > previousMessageCount) {
           for (int i = previousMessageCount; i < request; i++) {
             if (isAlertShowing == false) {
-               onDriverArrivedCallback?.call(ri!); 
+               onDriverArrivedCallback?.call(requestID); 
               flutterTts.speak('Tu móvil te esta esperando');
                isAlertShowing = true;
                notifyListeners();
@@ -154,16 +154,18 @@ class RequestProvider extends ChangeNotifier {
         await getUserDetails();
         assignedDriver = DriverModel(
             name: data!['nombre_driver'],
-            driverLicense: data['licencia'],
+            driverLicense: data['licencia'] ?? "",
             photoDriver: data['foto_chofer'],
-            rating: data['rating'],
+            rating: data['rating'].toDouble(),
             year: data['anio'].toString(),
-            color: data['color'],
-            photoVehicle: data['foto_movil'],
-            brand: data['marca'],
-            nroMovil: data['movil'],
-            placa: data['placa'],
-            driverId: data['driver_id']);
+            color: data['color'] ?? "",
+            photoVehicle: data['foto_movil'] ?? "",
+            brand: data['marca'] ?? "",
+            nroMovil: data['movil'] ?? "",
+            placa: data['placa'] ?? "",
+            driverId: data['driver_id'], 
+            qr: data['qr_imagen'] ?? '', 
+        );
         flutterTts.speak('Tu móvil esta en camino');
         _timer?.cancel();
         goToStep(RequestStep.conductorAsignado);
@@ -182,6 +184,8 @@ class RequestProvider extends ChangeNotifier {
         assignedDriver = null;
         prefs.remove('assignedDriver');
         prefs.remove('requestIDRIDE');
+        await DBHelper.instance.clearRequestId();
+        // prefs.remove('requestIDTEMPORAL');
         await prefs.setString('currentStep', RequestStep.seleccionar.name);
         playAudio();
         goToStep(RequestStep.seleccionar);
@@ -190,16 +194,24 @@ class RequestProvider extends ChangeNotifier {
     });
 
     // Escucha si fue cancelado por el usuario
-    _cancelledByUserSubscription = requestService.getCancelledByUser(requestID).listen((request) {
+    _cancelledByUserSubscription = requestService.getCancelledByUser(requestID).listen((request) async {
+      await prefs.remove('requestIDRIDE');
+      await prefs.remove('requestIdTemp');
+      // await prefs.remove('requestIDTEMPORAL');
       if (request == "1") {
+           await DBHelper.instance.clearRequestId();
         mostrardDibujadoDestino = false;
         isAccept = false;
       }
     });
 
     // Escucha si fue cancelado por el usuario (booleano)
-    _cancelledByUserBoolSubscription = requestService.getCancelledByUserBool(requestID).listen((request) {
+    _cancelledByUserBoolSubscription = requestService.getCancelledByUserBool(requestID).listen((request) async {
+      await prefs.remove('requestIDRIDE');
+      await prefs.remove('requestIdTemp');
+      // await prefs.remove('requestIDTEMPORAL');
       if (request == 'true') {
+        await DBHelper.instance.clearRequestId();
         mostrardDibujadoDestino = false;
         isAccept = false;
       }
@@ -207,13 +219,18 @@ class RequestProvider extends ChangeNotifier {
 
     _driverArrived = requestService.getTripArrived(requestID).listen((request) {
       if (request == '1') {
+
         flutterTts.speak('Tu móvil llegó al lugar');
       }
     });
 
     //cancelo el driver
-    _cancelledByDriver = requestService.getCancelledByDriver(requestID).listen((request) {
+    _cancelledByDriver = requestService.getCancelledByDriver(requestID).listen((request) async {
+      await prefs.remove('requestIDRIDE');
+      await prefs.remove('requestIdTemp');
+      // await prefs.remove('requestIDTEMPORAL');
       if (request == '1') {
+           await DBHelper.instance.clearRequestId();
         flutterTts.speak('El móvil ha cancelado el viaje');
         cancelSearch(requestID);
         mostrardDibujadoDestino = false;
@@ -272,17 +289,31 @@ class RequestProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> restoreStateFromPrefs() async {
-    
+Future<void> restoreStateFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     final savedStep = prefs.getString('currentStep');
+    final requestID = prefs.getString('requestIDRIDE');
+    
 
     if (savedStep != null) {
       currentStep = RequestStep.values.firstWhere((e) => e.name == savedStep);
     }
 
-    if (currentStep == RequestStep.conductorAsignado) {
+    if (currentStep == RequestStep.conductorAsignado && requestID != null) {
       final driverJson = prefs.getString('assignedDriver');
+
+      // 🔎 Verificar en Firebase si el viaje sigue activo
+      final status = await requestService.getStatusRideOnce(requestID);
+      final cancelledByDriver = await requestService.getCancelledByDriverOnce(requestID);
+      final completed = await requestService.getCompletedRideOnce(requestID);
+
+      if (status != 1 || cancelledByDriver == '1' || completed == '1') {
+        // 🚫 El viaje ya fue cancelado o finalizado
+        cancelSearch(requestID);
+        return;
+      }
+
+      // ✅ Restaurar conductor solo si sigue todo válido
       if (driverJson != null) {
         assignedDriver = DriverModel.fromJson(jsonDecode(driverJson));
       }
@@ -301,7 +332,19 @@ class RequestProvider extends ChangeNotifier {
     prefs.remove('assignedDriver');
     prefs.remove('requestIDRIDE');
     await prefs.setString('currentStep', RequestStep.seleccionar.name);
-
     goToStep(RequestStep.seleccionar);
+  }
+
+
+  // Añade este método a tu RequestProvider
+  void _disposeAllStreams() {
+    debugPrint("==> Disposing all streams...");
+    _messageCountSubscription?.cancel();
+    _statusRideSubscription?.cancel();
+    _cancelledByUserSubscription?.cancel();
+    _cancelledByUserBoolSubscription?.cancel();
+    _driverArrived?.cancel();
+    _cancelledByDriver?.cancel();
+    _completedRide?.cancel();
   }
 }

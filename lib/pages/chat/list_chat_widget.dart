@@ -1,13 +1,19 @@
-import 'dart:async';
+// ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_user/functions/fect_data_firebase.dart';
-import 'package:flutter_user/functions/functions.dart';
 import 'package:flutter_user/styles/styles.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -25,7 +31,6 @@ class ListChatWidget extends StatefulWidget {
 class _ListChatWidgetState extends State<ListChatWidget> {
   final DatabaseReference _messagesRef = FirebaseDatabase.instance.ref();
   final RequestService requestService = RequestService();
-  // final requestID = userDetails['onTripRequest']['data']['id'];
   List<Map<String, dynamic>> messages = [];
   StreamSubscription? _messagesSubscription;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -35,12 +40,8 @@ class _ListChatWidgetState extends State<ListChatWidget> {
     super.initState();
     _listenToMessages();
   }
-
-  void _listenToMessages() {
-    _messagesSubscription = _messagesRef
-        .child('requests/${widget.requestId}/array_mensajes')
-        .onValue
-        .listen((event) async {
+void _listenToMessages() {
+    _messagesSubscription = _messagesRef.child('requests/${widget.requestId}/array_mensajes').onValue.listen((event) async {
       if (!mounted) return;
 
       if (event.snapshot.value != null && event.snapshot.value is List) {
@@ -54,56 +55,37 @@ class _ListChatWidgetState extends State<ListChatWidget> {
 
             // Detectar nuevo mensaje
             if (msg["estado"] == "enviado" && msg["origen"] == "driver") {
-              _messagesRef
-                  .child('requests/${widget.requestId}/array_mensajes/$i')
-                  .update({"estado": "visto"});
+              _messagesRef.child('requests/${widget.requestId}/array_mensajes/$i').update({"estado": "visto"});
             }
           }
         }
 
+        final bool isNearBottom =
+            widget.controller.hasClients && widget.controller.position.pixels >= widget.controller.position.maxScrollExtent - 200;
+
         setState(() {
           messages = updatedMessages;
         });
+
+        if (isNearBottom) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (widget.controller.hasClients) {
+              widget.controller.animateTo(
+                widget.controller.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          });
+        }
       }
     });
   }
 
-  // void _listenToMessages() {
-  //   _messagesSubscription = _messagesRef
-  //       .child('requests/${widget.requestId}/array_mensajes')
-  //       .onValue
-  //       .listen((event) {
-  //     if (!mounted) return; // Evita actualizar el estado si la pantalla ya no está activa
-
-  //     if (event.snapshot.value != null && event.snapshot.value is List) {
-  //       List<dynamic> data = event.snapshot.value as List<dynamic>;
-  //       List<Map<String, dynamic>> updatedMessages = [];
-
-  //       for (int i = 0; i < data.length; i++) {
-  //         if (data[i] != null) {
-  //           Map<String, dynamic> msg = Map<String, dynamic>.from(data[i]);
-  //           updatedMessages.add(msg);
-
-  //           // 🔹 Marcar como "visto" solo si la pantalla está abierta
-  //           if (msg["estado"] == "enviado" && msg["origen"] == "driver") {
-  //             _messagesRef
-  //                 .child('requests/${widget.requestId}/array_mensajes/$i')
-  //                 .update({"estado": "visto"});
-  //           }
-  //         }
-  //       }
-
-  //       setState(() {
-  //         messages = updatedMessages;
-  //       });
-  //     }
-  //   });
-  // }
 
   @override
   void dispose() {
-    _messagesSubscription
-        ?.cancel(); // Cancelar la suscripción al salir de la pantalla
+    _messagesSubscription?.cancel(); 
     super.dispose();
   }
 
@@ -253,20 +235,30 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
     _audioPlayer.onPlayerComplete.listen((_) {
       setState(() {
         isPlaying = false;
-        _position = Duration.zero; // Reinicia la barra de progreso
+        _position = Duration.zero;
       });
     });
   }
 
-  void _togglePlayback() async {
-    if (isPlaying) {
-      await _audioPlayer.pause();
-    } else {
-      await _audioPlayer.play(UrlSource(widget.audioUrl));
+  Future<void> _togglePlayback() async {
+    try {
+      if (isPlaying) {
+        await _audioPlayer.pause();
+      } else {
+        await _audioPlayer.stop(); // reset
+        await _audioPlayer.play(UrlSource(widget.audioUrl));
+      }
+      setState(() {
+        isPlaying = !isPlaying;
+      });
+    } catch (e) {
+      debugPrint('❌ Error reproduciendo audio: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("No se pudo reproducir el audio")),
+        );
+      }
     }
-    setState(() {
-      isPlaying = !isPlaying;
-    });
   }
 
   String _formatDuration(Duration duration) {
@@ -277,42 +269,48 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-          onPressed: _togglePlayback,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              LinearProgressIndicator(
-                value: _duration.inSeconds > 0
-                    ? _position.inSeconds / _duration.inSeconds
-                    : 0.0,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(theme),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  "${_formatDuration(_position)} / ${_formatDuration(_duration)}",
-                  style: const TextStyle(fontSize: 8),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
   void dispose() {
     _audioPlayer.dispose();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      width: 280,
+      child: Row(
+        children: [
+          IconButton(
+            iconSize: 36,
+            icon: Icon(isPlaying ? Icons.pause_circle : Icons.play_circle, color: theme),
+            onPressed: _togglePlayback,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LinearProgressIndicator(
+                  minHeight: 4,
+                  value: _duration.inSeconds > 0 ? _position.inSeconds / _duration.inSeconds : 0.0,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(theme),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "${_formatDuration(_position)} / ${_formatDuration(_duration)}",
+                  style: const TextStyle(fontSize: 12, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -346,3 +344,72 @@ class ImageViewer extends StatelessWidget {
     );
   }
 }
+
+class ImageViewerSave extends StatelessWidget {
+  final String imageUrl;
+
+  const ImageViewerSave({super.key, required this.imageUrl});
+
+Future<void> saveImageFromUrl(String imageUrl, BuildContext context) async {
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+      final Uint8List imageData = response.bodyBytes;
+
+      final result = await ImageGallerySaverPlus.saveImage(
+        imageData,
+        quality: 80,
+        name: 'qr_${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      final filePath = result['filePath'] ?? result['file'];
+      if (filePath != null && filePath.toString().isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Imagen guardada")),
+        );
+
+        // Abrir la galería (o la app asociada al archivo)
+        await OpenFile.open(filePath.toString());
+      } else {
+        throw 'No se pudo obtener la ruta del archivo';
+      }
+    } catch (e) {
+      print('❌ Error al guardar la imagen: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("❌ Error al guardar la imagen")),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.download),
+            tooltip: 'Guardar imagen',
+            onPressed: () => saveImageFromUrl(imageUrl, context),
+          ),
+        ],
+      ),
+      body: Center(
+        child: PhotoViewGallery.builder(
+          itemCount: 1,
+          builder: (context, index) {
+            return PhotoViewGalleryPageOptions(
+              imageProvider: NetworkImage(imageUrl),
+              minScale: PhotoViewComputedScale.contained,
+              maxScale: PhotoViewComputedScale.covered * 2,
+            );
+          },
+          scrollPhysics: const BouncingScrollPhysics(),
+          backgroundDecoration: const BoxDecoration(color: Colors.black),
+        ),
+      ),
+    );
+  }
+}
+

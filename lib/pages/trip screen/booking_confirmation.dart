@@ -7214,7 +7214,7 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                       '';
                                                                   var val =
                                                                       await cancelRequestWithReason(
-                                                                          _cancelCustomReason);
+                                                                          _cancelCustomReason, context);
                                                                   if (val ==
                                                                       'logout') {
                                                                     navigateLogout();
@@ -7234,7 +7234,7 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                               } else {
                                                                 var val =
                                                                     await cancelRequestWithReason(
-                                                                        _cancelReason);
+                                                                        _cancelReason, context);
                                                                 if (val ==
                                                                     'logout') {
                                                                   navigateLogout();

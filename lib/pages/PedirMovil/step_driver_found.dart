@@ -6,6 +6,7 @@ import 'package:flutter_user/functions/functions.dart';
 import 'package:flutter_user/models/driver_model.dart';
 import 'package:flutter_user/pages/chat/chat_page.dart';
 import 'package:flutter_user/pages/chat/image_view_screen.dart';
+import 'package:flutter_user/pages/chat/list_chat_widget.dart';
 import 'package:flutter_user/pages/splash%20screen/loading.dart';
 import 'package:flutter_user/providers/request_provider.dart';
 import 'package:flutter_user/styles/styles.dart';
@@ -36,8 +37,7 @@ class StepDriverFound extends StatefulWidget {
 }
 
 class _StepDriverFoundState extends State<StepDriverFound> {
-  final DraggableScrollableController _sheetController =
-      DraggableScrollableController();
+  final DraggableScrollableController _sheetController = DraggableScrollableController();
   double _buttonOffset = 0.18;
   StreamSubscription? _driverLocationSubscription;
   bool isLoading = false;
@@ -48,12 +48,9 @@ class _StepDriverFoundState extends State<StepDriverFound> {
     cancellingUser = false;
     _sheetController.addListener(_updateOffset);
     _listenToDriverLocation(widget.driver.driverId.toString());
-    final requestProvider =
-        Provider.of<RequestProvider>(context, listen: false);
+    final requestProvider = Provider.of<RequestProvider>(context, listen: false);
 
     requestProvider.onDriverArrivedCallback = (requestId) {
-      print('MOSTRANDO ALERT PARA: $requestId'); // <- Asegúrate que esto sale
-
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -110,8 +107,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
       if (event.snapshot.value != null) {
         try {
           final data = Map<String, dynamic>.from(event.snapshot.value as Map);
-          final List<dynamic> location =
-              data['l'] as List<dynamic>? ?? [0.0, 0.0];
+          final List<dynamic> location = data['l'] as List<dynamic>? ?? [0.0, 0.0];
           final lat = location[0] as double;
           final lng = location[1] as double;
 
@@ -183,8 +179,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                           children: [
                             Text(
                               'Movil'.toString(),
-                              style: GoogleFonts.montserrat(
-                                  height: 0, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.montserrat(height: 0, fontWeight: FontWeight.bold),
                             ),
                             Container(
                               padding: const EdgeInsets.only(left: 5, right: 5),
@@ -214,8 +209,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                   width: media.width * 0.25,
                                   child: Text(
                                     widget.driver.driverLicense,
-                                    style: GoogleFonts.montserrat(
-                                        height: 0, fontWeight: FontWeight.bold),
+                                    style: GoogleFonts.montserrat(height: 0, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -230,8 +224,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                   width: media.width * 0.25,
                                   child: Text(
                                     widget.driver.brand,
-                                    style: GoogleFonts.montserrat(
-                                        height: 0, fontWeight: FontWeight.bold),
+                                    style: GoogleFonts.montserrat(height: 0, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -246,8 +239,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                   width: media.width * 0.25,
                                   child: Text(
                                     widget.driver.color,
-                                    style: GoogleFonts.montserrat(
-                                        height: 0, fontWeight: FontWeight.bold),
+                                    style: GoogleFonts.montserrat(height: 0, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -263,8 +255,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                   width: media.width * 0.25,
                                   child: Text(
                                     widget.driver.placa,
-                                    style: GoogleFonts.montserrat(
-                                        height: 0, fontWeight: FontWeight.bold),
+                                    style: GoogleFonts.montserrat(height: 0, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -279,8 +270,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                   width: media.width * 0.25,
                                   child: Text(
                                     widget.driver.year,
-                                    style: GoogleFonts.montserrat(
-                                        height: 0, fontWeight: FontWeight.bold),
+                                    style: GoogleFonts.montserrat(height: 0, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -292,8 +282,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ImageViewScreen(
-                                    imageUrl: widget.driver.photoVehicle),
+                                builder: (context) => ImageViewScreen(imageUrl: widget.driver.photoVehicle),
                               ),
                             );
                           },
@@ -314,36 +303,38 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                     widget: widget,
                     onTapChat: () async {
                       final prefs = await SharedPreferences.getInstance();
-                      final ri = prefs.getString('requestIDRIDE');
+                      String? ri = prefs.getString('requestIDRIDE');
+                      String? ri2 = prefs.getString('requestIDTEMPORAL');
+                      ri ??= ri2;
+                      await prefs.setString('requestIDRIDE', ri!);
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                    driver: widget.driver,
-                                    requestId: ri,
-                                  )));
-                    }, onTapCancell:  () async {
-        
-                                        setState(() {
-                                        cancelling = true;
-                                        isLoading = true;
-                                          
-                                        });
-                                        var reason = await cancelReasons(0);
-                                        if (reason == true) {
-                                          setState(() {
-                                            cancellingError = '';
-                                            cancelReason = '';
-                                            cancelling = true;
-        
-                                          });
-                                        }
-                                          setState(() {
-                                        cancelling = true;
-                                        isLoading = false;
-                                          
-                                        });
-                                      },
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPage(
+                            driver: widget.driver,
+                            requestId: ri
+                          ),
+                        ),
+                      );
+                    },
+                    onTapCancell: () async {
+                      setState(() {
+                        cancelling = true;
+                        isLoading = true;
+                      });
+                      var reason = await cancelReasons(0);
+                      if (reason == true) {
+                        setState(() {
+                          cancellingError = '';
+                          cancelReason = '';
+                          cancelling = true;
+                        });
+                      }
+                      setState(() {
+                        cancelling = true;
+                        isLoading = false;
+                      });
+                    },
                   ),
                 ],
               ),
@@ -360,17 +351,13 @@ class _StepDriverFoundState extends State<StepDriverFound> {
           ),
         ),
         Positioned(
-          bottom: screenHeight * (_buttonOffset) - 20,
-          right: media.height * 0.20,
-          child: Container(
-              width: media.width *0.12,
-              height: media.width *0.02,
-              decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 198, 198, 198),
-                borderRadius: BorderRadius.circular(20)
-              ),
-            )
-        ),
+            bottom: screenHeight * (_buttonOffset) - 20,
+            right: media.height * 0.20,
+            child: Container(
+              width: media.width * 0.12,
+              height: media.width * 0.02,
+              decoration: BoxDecoration(color: const Color.fromARGB(255, 198, 198, 198), borderRadius: BorderRadius.circular(20)),
+            )),
         Positioned(
           bottom: screenHeight * (_buttonOffset) + 20,
           left: 16,
@@ -379,8 +366,39 @@ class _StepDriverFoundState extends State<StepDriverFound> {
               FloatingActionButton(
                 onPressed: widget.onDriverLocationPressed,
                 backgroundColor: Colors.white,
-                child: Icon(Icons.drive_eta_rounded,
-                    color: theme, size: media.width * 0.068),
+                child: Icon(Icons.drive_eta_rounded, color: theme, size: media.width * 0.068),
+              ),
+               const SizedBox(
+                width: 8,
+              ),
+              widget.driver.qr == null || widget.driver.qr == '' 
+              ? Container() 
+              : FloatingActionButton(
+                onPressed: () async {
+                  if (widget.driver.qr == null || widget.driver.qr == '')  {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Este movil no tiene un qr',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Color.fromARGB(255, 151, 44, 36),
+                        duration: Duration(seconds: 3),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                    return;
+                  }
+                  // await getUserDetails();
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ImageViewerSave(imageUrl: widget.driver.qr!),
+                    ),
+                  );
+                },
+                backgroundColor: Colors.white,
+                child: Icon(Icons.qr_code_2, color: theme, size: media.width * 0.068),
               ),
               const SizedBox(
                 width: 8,
@@ -388,7 +406,10 @@ class _StepDriverFoundState extends State<StepDriverFound> {
               FloatingActionButton(
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
-                  final ri = prefs.getString('requestIDRIDE');
+                  String? ri = prefs.getString('requestIDRIDE');
+                  String? ri2 = prefs.getString('requestIDTEMPORAL');
+                  ri ??= ri2;
+                  await prefs.setString('requestIDRIDE', ri!);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -404,8 +425,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                   child: SizedBox(
                     height: media.width * 0.1,
                     width: media.width * 0.1,
-                    child: Icon(Icons.chat,
-                        color: theme, size: media.width * 0.068),
+                    child: Icon(Icons.chat, color: theme, size: media.width * 0.068),
                   ),
                 ),
               ),
@@ -425,9 +445,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                       Container(
                         padding: EdgeInsets.all(media.width * 0.05),
                         width: media.width * 0.9,
-                        decoration: BoxDecoration(
-                            color: page,
-                            borderRadius: BorderRadius.circular(12)),
+                        decoration: BoxDecoration(color: page, borderRadius: BorderRadius.circular(12)),
                         child: Column(children: [
                           MyText(
                             text: "Cancelar llamada",
@@ -444,35 +462,24 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                       InkWell(
                                         onTap: () {
                                           setState(() {
-                                            cancelReason =  cancelReasonsList[i]['reason'];
+                                            cancelReason = cancelReasonsList[i]['reason'];
                                           });
                                         },
                                         child: Container(
-                                          padding: EdgeInsets.all(
-                                              media.width * 0.01),
+                                          padding: EdgeInsets.all(media.width * 0.01),
                                           child: Row(
                                             children: [
                                               Container(
                                                 height: media.height * 0.05,
                                                 width: media.width * 0.05,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                        color: theme,
-                                                        width: 1.2)),
+                                                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: theme, width: 1.2)),
                                                 alignment: Alignment.center,
-                                                child: (cancelReason ==
-                                                        cancelReasonsList[i]
-                                                            ['reason'])
+                                                child: (cancelReason == cancelReasonsList[i]['reason'])
                                                     ? Container(
-                                                        height:
-                                                            media.width * 0.03,
-                                                        width:
-                                                            media.width * 0.03,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
+                                                        height: media.width * 0.03,
+                                                        width: media.width * 0.03,
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
                                                           color: theme,
                                                         ),
                                                       )
@@ -484,8 +491,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                               SizedBox(
                                                   width: media.width * 0.65,
                                                   child: MyText(
-                                                    text: cancelReasonsList[i]
-                                                        ['reason'],
+                                                    text: cancelReasonsList[i]['reason'],
                                                     size: media.width * twelve,
                                                   ))
                                             ],
@@ -509,10 +515,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                   Container(
                                     height: media.height * 0.05,
                                     width: media.width * 0.05,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                            color: theme, width: 1.2)),
+                                    decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: theme, width: 1.2)),
                                     alignment: Alignment.center,
                                     child: (cancelReason == 'others')
                                         ? Container(
@@ -529,8 +532,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                     width: media.width * 0.05,
                                   ),
                                   MyText(
-                                    text: languages[choosenLanguage]
-                                        ['text_others'],
+                                    text: languages[choosenLanguage]['text_others'],
                                     size: media.width * twelve,
                                   )
                                 ],
@@ -539,8 +541,7 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                           ),
                           (cancelReason == 'others')
                               ? Container(
-                                  margin: const EdgeInsets.only(
-                                      left: 10, right: 10, top: 10, bottom: 20),
+                                  margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
 
                                   // height: media.width*0.2,
                                   width: media.width * 0.9,
@@ -548,13 +549,9 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                   child: TextField(
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        hintText: languages[choosenLanguage]
-                                            ['text_cancelRideReason'],
-                                        hintStyle: GoogleFonts.notoSans(
-                                            color: textColor.withOpacity(0.4),
-                                            fontSize: media.width * twelve)),
-                                    style:
-                                        GoogleFonts.notoSans(color: textColor),
+                                        hintText: languages[choosenLanguage]['text_cancelRideReason'],
+                                        hintStyle: GoogleFonts.notoSans(color: textColor.withOpacity(0.4), fontSize: media.width * twelve)),
+                                    style: GoogleFonts.notoSans(color: textColor),
                                     maxLines: 4,
                                     minLines: 2,
                                     onChanged: (val) {
@@ -567,14 +564,9 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                               : Container(),
                           (cancellingError != '')
                               ? Container(
-                                  padding: EdgeInsets.only(
-                                      top: media.width * 0.02,
-                                      bottom: media.width * 0.02),
+                                  padding: EdgeInsets.only(top: media.width * 0.02, bottom: media.width * 0.02),
                                   width: media.width * 0.9,
-                                  child: Text(cancellingError,
-                                      style: GoogleFonts.notoSans(
-                                          fontSize: media.width * twelve,
-                                          color: Colors.red)))
+                                  child: Text(cancellingError, style: GoogleFonts.notoSans(fontSize: media.width * twelve, color: Colors.red)))
                               : Container(),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -588,46 +580,38 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                                       cancelling = false;
                                     });
                                   },
-                                  text: languages[choosenLanguage]
-                                      ['tex_dontcancel']),
+                                  text: languages[choosenLanguage]['tex_dontcancel']),
                               Button(
                                   textcolor: buttonColor,
                                   width: media.width * 0.39,
                                   onTap: () async {
-
                                     if (cancelReason != '') {
                                       if (cancelReason == 'others') {
-                                        if (cancelCustomReason != '' &&
-                                            cancelCustomReason.isNotEmpty) {
+                                        if (cancelCustomReason != '' && cancelCustomReason.isNotEmpty) {
                                           cancellingError = '';
-                                          var val = await cancelRequestWithReason(cancelCustomReason);
-                                          if (val == 'success') {
-                                            requestProvider.cancelSearch();
-                                            
-                                          }
+                                          var val = await cancelRequestWithReason(cancelCustomReason, context);
+                                          // if (val == 'success') {
+                                          //   requestProvider.cancelSearch();
+                                          // }
                                           setState(() {
                                             cancelling = false;
                                           });
                                         } else {
                                           setState(() {
-                                          cancellingError =
-                                                languages[choosenLanguage]
-                                                    ['text_add_cancel_reason'];
+                                            cancellingError = languages[choosenLanguage]['text_add_cancel_reason'];
                                           });
                                         }
                                       } else {
-                                        var val = await cancelRequestWithReason(cancelReason);
-                                        if (val == 'success') {
-                                            requestProvider.cancelSearch();
-                                            
-                                          }
+                                        var val = await cancelRequestWithReason(cancelReason, context);
+                                        // if (val == 'success') {
+                                        //   requestProvider.cancelSearch();
+                                        // }
                                         cancelling = false;
-
                                       }
                                     } else {}
                                   },
-                                  text: languages[choosenLanguage]
-                                      ['text_confirm']),
+                                  text: languages[choosenLanguage]['text_confirm']
+                                ),
                             ],
                           )
                         ]),
@@ -637,16 +621,14 @@ class _StepDriverFoundState extends State<StepDriverFound> {
                 ),
               )
             : Container(),
-        (isLoading == true)
-        ? const Loading()
-        : Container()
+        (isLoading == true) ? const Loading() : Container()
       ],
     );
   }
 }
 
 class SecondInfoDriver extends StatefulWidget {
-   SecondInfoDriver({
+  SecondInfoDriver({
     super.key,
     required this.media,
     required this.widget,
@@ -690,8 +672,7 @@ class _SecondInfoDriverState extends State<SecondInfoDriver> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ImageViewScreen(
-                                  imageUrl: widget.widget.driver.photoDriver),
+                              builder: (context) => ImageViewScreen(imageUrl: widget.widget.driver.photoDriver),
                             ),
                           );
                         },
@@ -701,9 +682,7 @@ class _SecondInfoDriverState extends State<SecondInfoDriver> {
                           margin: const EdgeInsets.only(right: 30),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: NetworkImage(widget.widget.driver.photoDriver),
-                                fit: BoxFit.cover),
+                            image: DecorationImage(image: NetworkImage(widget.widget.driver.photoDriver), fit: BoxFit.cover),
                           ),
                         ),
                       ),
@@ -762,23 +741,14 @@ class _SecondInfoDriverState extends State<SecondInfoDriver> {
                               children: [
                                 Container(
                                     padding: const EdgeInsets.all(5),
-                                    decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xff484848)),
+                                    decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xff484848)),
                                     width: widget.media.width * 0.14,
-                                    child:
-                                        Image.asset('assets/images/chat-alt.png')),
-                                if (chatList
-                                    .where((element) =>
-                                        element['from_type'] == 2 &&
-                                        element['seen'] == 0)
-                                    .isNotEmpty)
+                                    child: Image.asset('assets/images/chat-alt.png')),
+                                if (chatList.where((element) => element['from_type'] == 2 && element['seen'] == 0).isNotEmpty)
                                   Container(
                                     height: widget.media.width * 0.02,
                                     width: widget.media.width * 0.02,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: verifyDeclined),
+                                    decoration: BoxDecoration(shape: BoxShape.circle, color: verifyDeclined),
                                   )
                               ],
                             ),
@@ -787,59 +757,56 @@ class _SecondInfoDriverState extends State<SecondInfoDriver> {
                       ),
                     ],
                   ),
-                   Column(
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              (userRequestData['is_trip_start'] != 1)
-                                  ? InkWell(
-                                      onTap: widget.onTapCancell,
-                                      // () async {
-        
-                                      //   setState(() {
-                                      //   cancelling = true;
-                                      //   isLoading = true;
-                                          
-                                      //   });
-                                      //   var reason = await cancelReasons(0);
-                                      //   if (reason == true) {
-                                      //     setState(() {
-                                      //       cancellingError = '';
-                                      //       cancelReason = '';
-                                      //       cancelling = true;
-        
-                                      //     });
-                                      //   }
-                                      //     setState(() {
-                                      //   cancelling = true;
-                                      //   isLoading = false;
-                                          
-                                      //   });
-                                      // },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                                'assets/images/cancel_mobile.png',
-                                                width: 32),
-                                            MyText(
-                                              text: languages[choosenLanguage]
-                                                  ['text_cancel_booking'],
-                                              size: 16,
-                                              fontweight: FontWeight.w600,
-                                              color: textColorGrey,
-                                            ),
-                                          ],
+                          (userRequestData['is_trip_start'] != 1)
+                              ? InkWell(
+                                  onTap: widget.onTapCancell,
+                                  // () async {
+
+                                  //   setState(() {
+                                  //   cancelling = true;
+                                  //   isLoading = true;
+
+                                  //   });
+                                  //   var reason = await cancelReasons(0);
+                                  //   if (reason == true) {
+                                  //     setState(() {
+                                  //       cancellingError = '';
+                                  //       cancelReason = '';
+                                  //       cancelling = true;
+
+                                  //     });
+                                  //   }
+                                  //     setState(() {
+                                  //   cancelling = true;
+                                  //   isLoading = false;
+
+                                  //   });
+                                  // },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      children: [
+                                        Image.asset('assets/images/cancel_mobile.png', width: 32),
+                                        MyText(
+                                          text: languages[choosenLanguage]['text_cancel_booking'],
+                                          size: 16,
+                                          fontweight: FontWeight.w600,
+                                          color: textColorGrey,
                                         ),
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container(),
                         ],
-                      )
+                      ),
+                    ],
+                  )
                 ],
               ),
             ],

@@ -29,8 +29,7 @@ class RequestService {
 
 
 Future<Map<String, dynamic>?> getRequestData(String requestId) async {
-  final DatabaseReference requestRef =
-      FirebaseDatabase.instance.ref('requests/$requestId');
+  final DatabaseReference requestRef = FirebaseDatabase.instance.ref('requests/$requestId');
 
   final DataSnapshot snapshot = await requestRef.get();
 
@@ -40,6 +39,31 @@ Future<Map<String, dynamic>?> getRequestData(String requestId) async {
     return null;
   }
 }
+
+Future<int?> getStatusRideOnce(String requestId) async {
+    final snapshot = await _ref.child(requestId).child('is_accept').get();
+    if (snapshot.exists && snapshot.value != null) {
+      return int.tryParse(snapshot.value.toString());
+    }
+    return null;
+  }
+
+  Future<String?> getCancelledByDriverOnce(String requestId) async {
+    final snapshot = await _ref.child(requestId).child('cancelled_by_driver').get();
+    if (snapshot.exists && snapshot.value != null) {
+      return snapshot.value.toString();
+    }
+    return null;
+  }
+
+  Future<String?> getCompletedRideOnce(String requestId) async {
+    final snapshot = await _ref.child(requestId).child('is_completed').get();
+    if (snapshot.exists && snapshot.value != null) {
+      return snapshot.value.toString();
+    }
+    return null;
+  }
+
 
   
 

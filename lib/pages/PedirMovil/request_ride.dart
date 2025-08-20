@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_user/functions/functions.dart';
 import 'package:flutter_user/pages/PedirMovil/seleccionar%20auto/select_vehicle.dart';
 import 'package:flutter_user/pages/PedirMovil/step_driver_found.dart';
 import 'package:flutter_user/pages/PedirMovil/step_search_driver.dart';
-import 'package:flutter_user/pages/login/login.dart';
 import 'package:flutter_user/providers/request_provider.dart';
-import 'package:flutter_user/styles/styles.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RequestRideScreen extends StatefulWidget {
   final LatLng? customPickup;
@@ -65,7 +61,7 @@ void updateDriverPosition(LatLng position) {
     _getCurrentLocation();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<RequestProvider>(context, listen: false);
-      provider.restoreStateFromPrefs();
+      // provider.restoreStateFromPrefs();
       provider.fetchEtaData();
 
       if (widget.showDriverStep == true ) {
@@ -73,6 +69,7 @@ void updateDriverPosition(LatLng position) {
       }
     });
   }
+  
 void _getCurrentLocation() async {
   if (widget.customPickup != null) {
     setState(() {
@@ -134,9 +131,16 @@ void _getCurrentLocation() async {
                     },
                   ),
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                     TileLayer(
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+                      // Asigna un NetworkTileProvider al parámetro 'tileProvider'.
+                      tileProvider: NetworkTileProvider(
+                        // Y los headers van dentro de este NetworkTileProvider.
+                        headers: {
+                          'User-Agent': 'MiAppDeTarija/1.0 (gerson10107@gmail.com)',
+                        },
+                      ),
                     ),
                     MarkerLayer(
                       markers: [
@@ -178,7 +182,7 @@ void _getCurrentLocation() async {
                 Consumer<RequestProvider>(
                   builder: (_, provider, __) {
                     if (provider.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator(color: Colors.grey,));
                     }
 
                     switch (provider.currentStep) {
@@ -196,6 +200,9 @@ void _getCurrentLocation() async {
                           child: StepSearchingDriver(),
                         );
                       case RequestStep.conductorAsignado:
+                       if (provider.assignedDriver == null) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
                         return StepDriverFound(
                           driver: provider.assignedDriver!,
                           onMyLocationPressed: moveToCurrentLocation,

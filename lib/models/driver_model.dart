@@ -10,6 +10,7 @@ class DriverModel {
   final String nroMovil;
   final String placa;
   final int driverId;
+  final String? qr;
 
   DriverModel({
     required this.name,
@@ -23,6 +24,7 @@ class DriverModel {
     required this.nroMovil,
     required this.placa,
     required this.driverId,
+    required this.qr
   });
 
   Map<String, dynamic> toJson() => {
@@ -37,6 +39,7 @@ class DriverModel {
         'nroMovil': nroMovil,
         'placa': placa,
         'driverId': driverId,
+        'qr': qr
       };
 
   factory DriverModel.fromJson(Map<String, dynamic> json) => DriverModel(
@@ -50,6 +53,6 @@ class DriverModel {
         brand: json['brand'],
         nroMovil: json['nroMovil'] ?? '',
          placa: json['placa'] ?? '',
-        driverId: json['driverId'] ?? 0
+        driverId: json['driverId'] ?? 0, qr: 'qr'
       );
 }
