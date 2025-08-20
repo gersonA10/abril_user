@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 import 'package:flutter_user/functions/fect_data_firebase.dart';
 import 'package:flutter_user/functions/providers/sign_in_provider.dart';
 import 'package:flutter_user/pages/PedirMovil/request_ride.dart';

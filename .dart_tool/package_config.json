@@ -33,7 +33,7 @@
     },
     {
       "name": "async",
-      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/async-2.12.0",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/async-2.13.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -207,7 +207,7 @@
     },
     {
       "name": "fake_async",
-      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/fake_async-1.3.2",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/fake_async-1.3.3",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -329,7 +329,7 @@
       "name": "flutter",
       "rootUri": "file:///Users/gersonaguilar/Development/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "flutter_cache_manager",
@@ -485,7 +485,7 @@
       "name": "flutter_test",
       "rootUri": "file:///Users/gersonaguilar/Development/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "flutter_tts",
@@ -497,7 +497,7 @@
       "name": "flutter_web_plugins",
       "rootUri": "file:///Users/gersonaguilar/Development/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "freezed_annotation",
@@ -668,6 +668,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "image_gallery_saver_plus",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/image_gallery_saver_plus-4.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
       "name": "image_picker",
       "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/image_picker-1.1.2",
       "packageUri": "lib/",
@@ -771,19 +777,19 @@
     },
     {
       "name": "leak_tracker",
-      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/leak_tracker-10.0.8",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/leak_tracker-11.0.1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "leak_tracker_flutter_testing",
-      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.9",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.10",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "leak_tracker_testing",
-      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.1",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -876,6 +882,54 @@
       "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/octo_image-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "open_file",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/open_file-3.5.10",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "open_file_android",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/open_file_android-1.0.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "open_file_ios",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/open_file_ios-1.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "open_file_linux",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/open_file_linux-0.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "open_file_mac",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/open_file_mac-1.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "open_file_platform_interface",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/open_file_platform_interface-1.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "open_file_web",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/open_file_web-0.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "open_file_windows",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/open_file_windows-0.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "package_info_plus",
@@ -1157,7 +1211,7 @@
       "name": "sky_engine",
       "rootUri": "file:///Users/gersonaguilar/Development/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "source_span",
@@ -1239,7 +1293,7 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/test_api-0.7.4",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/test_api-0.7.6",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -1341,13 +1395,13 @@
     },
     {
       "name": "vector_math",
-      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/vector_math-2.1.4",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/vector_math-2.2.0",
       "packageUri": "lib/",
-      "languageVersion": "2.14"
+      "languageVersion": "3.1"
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/vm_service-14.3.1",
+      "rootUri": "file:///Users/gersonaguilar/.pub-cache/hosted/pub.dev/vm_service-15.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -1418,10 +1472,9 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2025-05-14T16:40:40.662422Z",
   "generator": "pub",
-  "generatorVersion": "3.7.2",
+  "generatorVersion": "3.9.0",
   "flutterRoot": "file:///Users/gersonaguilar/Development/flutter",
-  "flutterVersion": "3.29.2",
+  "flutterVersion": "3.35.1",
   "pubCache": "file:///Users/gersonaguilar/.pub-cache"
 }

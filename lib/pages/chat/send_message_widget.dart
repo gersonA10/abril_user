@@ -30,7 +30,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
   TextEditingController chatText = TextEditingController();
   final audioService = ChatAudioService();
   bool showSendTextButton = false;
-    final AudioRecorder _recorder = AudioRecorder();
+    final Record _recorder = Record();
       Timer? _recordingTimer;
    bool isLoading = false; // Nuevo estado para el loader
 
@@ -92,7 +92,6 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
     String filePath = '${directory.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
     await _recorder.start(
-      const RecordConfig(),
       path: filePath,
     );
 

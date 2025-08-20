@@ -89,6 +89,8 @@ dependencies:
   cached_network_image: ^3.4.1
   flutter_tts: ^4.2.2
   lottie: ^3.3.1
+  image_gallery_saver_plus: ^4.0.1
+  open_file: ^3.5.10
 
 
 dev_dependencies:

@@ -20,7 +20,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final _recorder = AudioRecorder();
+  final _recorder = Record();
   final ScrollController _controller = ScrollController();
     late DatabaseReference _requestRef;
 

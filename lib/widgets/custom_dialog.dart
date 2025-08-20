@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 import 'package:flutter_user/styles/styles.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart';
@@ -211,13 +210,13 @@ class _MapaInteractivoState extends State<MapaInteractivo> {
         ),
         children: [
           // Capa del mapa offline
-          TileLayer(
-            tileProvider: MbTilesTileProvider.fromPath(path: widget.mbtilesPath),
-            maxZoom: 18,
-            minZoom: 5,
-            tileBounds: LatLngBounds(esquinaSuroeste, esquinaNoreste),
-            fallbackUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          ),
+          // TileLayer(
+          //   tileProvider: MbTilesTileProvider.fromPath(path: widget.mbtilesPath),
+          //   maxZoom: 18,
+          //   minZoom: 5,
+          //   tileBounds: LatLngBounds(esquinaSuroeste, esquinaNoreste),
+          //   fallbackUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          // ),
 
           // Capa de tus marcadores
       MarkerLayer(
